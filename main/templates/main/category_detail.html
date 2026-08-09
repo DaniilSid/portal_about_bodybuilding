@@ -1,0 +1,33 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ category.name }} - FIT-PORTAL{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Главная</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">{{ category.name }}</h1>
+
+    <!-- ПЛИТКИ СТАТЕЙ РАЗДЕЛА -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for article in articles %}
+            <div class="col">
+                <div class="card h-100 shadow-sm article-card">
+                    <img src="{{ article.get_image }}" class="card-img-top" alt="{{ article.title }}">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ article.title }}</h5>
+                        <p class="card-text text-muted flex-grow-1">{{ article.preview_text }}</p>
+                        <a href="{% url 'article_detail' category_slug=category.slug article_slug=article.slug %}" 
+                           class="btn btn-primary mt-auto">Читать статью</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-warning">В этом разделе пока нет статей.</div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

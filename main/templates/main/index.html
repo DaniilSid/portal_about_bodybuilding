@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Главная страница - FIT-PORTAL{% endblock %}
+
+{% block breadcrumbs %}
+    <li class="breadcrumb-item active">Главная</li>
+{% endblock %}
+
+{% block content %}
+    <div class="p-4 mb-4 bg-primary text-white rounded-3 shadow-sm">
+        <h1 class="display-5 fw-bold">Добро пожаловать в FIT-PORTAL!</h1>
+        <p class="fs-4">Лучшие статьи о тренировках, питании, витаминах и восстановлении.</p>
+    </div>
+
+    <h2 class="mb-4">🔥 Избранные статьи</h2>
+
+    <!-- ПЛИТКИ ИЗБРАННЫХ СТАТЕЙ -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for article in featured_articles %}
+            <div class="col">
+                <div class="card h-100 shadow-sm article-card">
+                    <img src="{{ article.get_image }}" class="card-img-top" alt="{{ article.title }}">
+                    <div class="card-body d-flex flex-column">
+                        <span class="badge bg-secondary mb-2 align-self-start">{{ article.category.name }}</span>
+                        <h5 class="card-title">{{ article.title }}</h5>
+                        <p class="card-text text-muted flex-grow-1">{{ article.preview_text|truncatewords:20 }}</p>
+                        <a href="{% url 'article_detail' category_slug=article.category.slug article_slug=article.slug %}" 
+                           class="btn btn-outline-primary mt-auto">Читать далее</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">На Главный экран пока не добавлено ни одной плитки. Отметьте галочки в Админ-панели!</div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
