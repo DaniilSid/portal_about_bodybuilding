@@ -7,32 +7,68 @@
 {% endblock %}
 
 {% block content %}
-    <div class="p-4 mb-4 bg-primary text-white rounded-3 shadow-sm">
-        <h1 class="display-5 fw-bold">Добро пожаловать в FIT-PORTAL!</h1>
-        <p class="fs-4">Лучшие статьи о тренировках, питании, витаминах и восстановлении.</p>
+
+    <!-- КРУПНЫЙ ЧЕРНО-ЖЕЛТЫЙ БАННЕР ВО ВСЮ ШИРИНУ -->
+    <div class="hero-banner p-4 p-md-5 mb-5 rounded-4 shadow-lg text-white" 
+         style="background: linear-gradient(135deg, #0a0a0a 0%, #1e1e1e 100%); border: 1px solid rgba(255, 193, 7, 0.25); border-left: 8px solid #ffc107;">
+        
+        <div class="row align-items-center">
+            <div class="col-lg-9">
+                <!-- Бейдж -->
+                <span class="badge bg-warning text-dark px-3 py-2 fs-6 fw-bold mb-3 text-uppercase shadow-sm">
+                    ⚡️ Твой спортивный гид
+                </span>
+                
+                <!-- Заголовок -->
+                <h1 class="display-3 fw-bold text-warning mb-3">
+                    Добро пожаловать в <span class="text-white">FIT-PORTAL</span>!
+                </h1>
+                
+                <!-- Подзаголовок -->
+                <p class="fs-4 mb-0 text-light opacity-90 lh-base" style="max-width: 900px; color: #e0e0e0;">
+                    Проверенные программы тренировок, гид по витаминам и спортивным добавкам, разбор техники упражнений и правильное восстановление.
+                </p>
+            </div>
+
+            <!-- Иконка сбоку для объёма -->
+            <div class="col-lg-3 text-center d-none d-lg-block">
+                <div class="display-1 text-warning opacity-75" style="filter: drop-shadow(0 0 15px rgba(255,193,7,0.3));">
+                    💪
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <h2 class="mb-4">🔥 Избранные статьи</h2>
+    <!-- ЗАГОЛОВОК СЕКЦИИ ИЗБРАННОЕ -->
+    <div class="d-flex align-items-center mb-4">
+        <h2 class="fw-bold m-0 border-start border-4 border-warning ps-3">
+            🔥 Избранные статьи
+        </h2>
+    </div>
 
     <!-- ПЛИТКИ ИЗБРАННЫХ СТАТЕЙ -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for article in featured_articles %}
             <div class="col">
-                <div class="card h-100 shadow-sm article-card">
+                <div class="card h-100 shadow-sm article-card border-0">
                     <img src="{{ article.get_image }}" class="card-img-top" alt="{{ article.title }}">
-                    <div class="card-body d-flex flex-column">
-                        <span class="badge bg-secondary mb-2 align-self-start">{{ article.category.name }}</span>
-                        <h5 class="card-title">{{ article.title }}</h5>
+                    <div class="card-body d-flex flex-column bg-white">
+                        <span class="badge bg-dark text-warning mb-2 align-self-start">{{ article.category.name }}</span>
+                        <h5 class="card-title fw-bold">{{ article.title }}</h5>
                         <p class="card-text text-muted flex-grow-1">{{ article.preview_text|truncatewords:20 }}</p>
                         <a href="{% url 'article_detail' category_slug=article.category.slug article_slug=article.slug %}" 
-                           class="btn btn-outline-primary mt-auto">Читать далее</a>
+                           class="btn btn-dark text-warning fw-bold mt-auto">Читать далее →</a>
                     </div>
                 </div>
             </div>
         {% empty %}
             <div class="col-12">
-                <div class="alert alert-info">На Главный экран пока не добавлено ни одной плитки. Отметьте галочки в Админ-панели!</div>
+                <div class="alert alert-dark text-warning border-warning">
+                    На Главный экран пока не добавлено ни одной плитки. Отметьте галочки в Админ-панели!
+                </div>
             </div>
         {% endfor %}
     </div>
+
 {% endblock %}
