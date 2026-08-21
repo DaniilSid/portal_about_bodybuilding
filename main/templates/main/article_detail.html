@@ -9,22 +9,219 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row justify-content-center">
-        <div class="col-lg-9 bg-white p-4 p-md-5 rounded shadow-sm">
-            <span class="badge bg-primary mb-2">{{ category.name }}</span>
-            <h1 class="display-5 fw-bold mb-3">{{ article.title }}</h1>
-            <p class="text-muted small mb-4">Опубликовано: {{ article.created_at|date:"d E Y" }}</p>
+    <div class="row g-4 justify-content-center">
+        
+        <!-- ОСНОВНАЯ СТАТЬЯ -->
+        <div class="col-lg-8">
+            <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border">
+                
+                <span class="badge bg-dark text-warning mb-2 px-3 py-2 fs-6 fw-bold">{{ category.name }}</span>
+                <h1 class="display-5 fw-bold mb-3">{{ article.title }}</h1>
+                <p class="text-muted small mb-4">Опубликовано: {{ article.created_at|date:"d E Y" }}</p>
 
-            <!-- ФОТО СТАТЬИ -->
-            <img src="{{ article.get_image }}" class="img-fluid rounded mb-4 w-100" style="max-height: 450px; object-fit: cover;" alt="{{ article.title }}">
+                <!-- Фото статьи -->
+                <img src="{{ article.get_image }}" class="img-fluid rounded-4 mb-4 w-100" style="max-height: 450px; object-fit: cover;" alt="{{ article.title }}">
 
-            <!-- ТЕКСТ СТАТЬИ -->
-            <div class="fs-5 lh-lg">
-                {{ article.content|safe }}
+                <!-- РЕКЛАМНЫЙ БЛОК №1 
+                <div class="my-4 p-3 bg-light border rounded-3 text-center text-muted">
+                    <small class="d-block text-uppercase fw-bold text-secondary mb-1" style="font-size: 0.7rem;">Реклама</small>
+                    <span>🎯 Рекламный блок перед статьей</span>
+                </div> -->
+
+                <!-- Текст статьи -->
+                <div class="fs-5 lh-lg text-dark">
+                    {{ article.content|safe }}
+                </div>
+
+                <!-- 🧮 ИНТЕРАКТИВНЫЙ КАЛЬКУЛЯТОР КБЖУ (ПОКАЗЫВАЕТСЯ В СТАТЬЕ) -->
+                <div class="my-5 p-4 p-md-5 rounded-4 text-white shadow-lg" style="background: linear-gradient(135deg, #0a0a0a 0%, #1e1e1e 100%); border: 2px solid #ffc107;">
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="fs-2 me-2">📊</span>
+                        <h3 class="fw-bold text-warning m-0">Онлайн-калькулятор КБЖУ</h3>
+                    </div>
+                    <p class="text-light opacity-75 mb-4">Рассчитайте свою индивидуальную суточную норму калорий и БЖУ по формуле Миффлина-Сан Жеора.</p>
+
+                    <form id="kbjuForm" onsubmit="return false;">
+                        <div class="row g-3">
+                            <!-- Пол -->
+                            <div class="col-md-6">
+                                <label class="form-label text-warning fw-bold small">Пол</label>
+                                <select id="gender" class="form-select bg-dark text-light border-secondary">
+                                    <option value="male">Мужской</option>
+                                    <option value="female">Женский</option>
+                                </select>
+                            </div>
+
+                            <!-- Цель -->
+                            <div class="col-md-6">
+                                <label class="form-label text-warning fw-bold small">Ваша цель</label>
+                                <select id="goal" class="form-select bg-dark text-light border-secondary">
+                                    <option value="lose">🔥 Похудение (Дефицит -15%)</option>
+                                    <option value="maintain" selected>⚖️ Поддержание веса</option>
+                                    <option value="gain">💪 Набор массы (Профицит +15%)</option>
+                                </select>
+                            </div>
+
+                            <!-- Возраст -->
+                            <div class="col-6 col-md-4">
+                                <label class="form-label text-light small">Возраст (лет)</label>
+                                <input type="number" id="age" class="form-control bg-dark text-light border-secondary" placeholder="25" value="25" required>
+                            </div>
+
+                            <!-- Рост -->
+                            <div class="col-6 col-md-4">
+                                <label class="form-label text-light small">Рост (см)</label>
+                                <input type="number" id="height" class="form-control bg-dark text-light border-secondary" placeholder="175" value="175" required>
+                            </div>
+
+                            <!-- Вес -->
+                            <div class="col-12 col-md-4">
+                                <label class="form-label text-light small">Вес (кг)</label>
+                                <input type="number" id="weight" class="form-control bg-dark text-light border-secondary" placeholder="70" value="70" required>
+                            </div>
+
+                            <!-- Активность -->
+                            <div class="col-12">
+                                <label class="form-label text-warning fw-bold small">Уровень активности</label>
+                                <select id="activity" class="form-select bg-dark text-light border-secondary">
+                                    <option value="1.2">Минимальная (сидячая работа, без тренировок)</option>
+                                    <option value="1.375">Низкая (1-3 легкие тренировки в неделю)</option>
+                                    <option value="1.55" selected>Умеренная (3-5 тренировок в неделю)</option>
+                                    <option value="1.725">Высокая (6-7 тяжелых тренировок в неделю)</option>
+                                </select>
+                            </div>
+
+                            <!-- Кнопка расчета -->
+                            <div class="col-12 mt-4">
+                                <button type="button" onclick="calculateKBJU()" class="btn btn-warning w-100 fw-bold py-3 fs-5 shadow">
+                                    ⚡ Рассчитать норму КБЖУ
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- РЕЗУЛЬТАТЫ РАСЧЕТА (ВЫПАДАЮТ ПОСЛЕ НАЖАТИЯ) -->
+                    <div id="resultBlock" class="mt-4 p-4 rounded-3 bg-dark border border-warning" style="display: none;">
+                        <h4 class="text-center text-warning fw-bold mb-3">Ваша суточная норма:</h4>
+                        
+                        <div class="text-center mb-4">
+                            <span id="resCalories" class="display-4 fw-bold text-white">0</span>
+                            <span class="fs-4 text-warning"> ккал / день</span>
+                        </div>
+
+                        <div class="row text-center g-2">
+                            <div class="col-4">
+                                <div class="p-2 rounded bg-secondary bg-opacity-25 border border-secondary">
+                                    <small class="d-block text-muted">Белки</small>
+                                    <strong id="resProteins" class="fs-4 text-warning">0</strong> <small>г</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="p-2 rounded bg-secondary bg-opacity-25 border border-secondary">
+                                    <small class="d-block text-muted">Жиры</small>
+                                    <strong id="resFats" class="fs-4 text-warning">0</strong> <small>г</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="p-2 rounded bg-secondary bg-opacity-25 border border-secondary">
+                                    <small class="d-block text-muted">Углеводы</small>
+                                    <strong id="resCarbs" class="fs-4 text-warning">0</strong> <small>г</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- 🏁 КОНЕЦ КАЛЬКУЛЯТОРА -->
+
+              <!-- <!-- РЕКЛАМНЫЙ БЛОК №2
+                <div class="my-4 p-4 bg-dark text-warning rounded-4 text-center border border-warning shadow-sm">
+                    <small class="d-block text-uppercase fw-bold text-muted mb-1" style="font-size: 0.7rem;">Спонсорский блок</small>
+                    <h5 class="fw-bold mb-1">Понравилась статья?</h5>
+                    <p class="mb-0 text-white fs-6">Здесь может быть ссылка на спортивный интернет-магазин или бренд питания.</p>
+                </div>
+
+                <hr class="my-4">
+                <a href="{% url 'category_detail' slug=category.slug %}" class="btn btn-outline-dark fw-bold">
+                    ← Назад в раздел "{{ category.name }}"
+                </a>
             </div>
+        </div> 
 
-            <hr class="my-5">
-            <a href="{% url 'category_detail' slug=category.slug %}" class="btn btn-outline-secondary">← Назад в раздел "{{ category.name }}"</a>
+        <!-- БОКОВОЙ САЙДБАР С РЕКЛАМОЙ -->
+       <!-- <div class="col-lg-4">
+            <div class="sticky-top" style="top: 100px; z-index: 10;">
+                <div class="card shadow-sm border-0 mb-4 rounded-4 bg-white">
+                    <div class="card-body p-4 text-center">
+                        <small class="text-uppercase text-muted fw-bold d-block mb-2" style="font-size: 0.75rem;">Реклама / Партнеры</small>
+                        <div class="p-4 bg-light rounded-3 border border-2 border-dashed">
+                            <div class="display-6 mb-2">💊</div>
+                            <h6 class="fw-bold">Спортивное питание</h6>
+                            <p class="small text-muted mb-3">Скидки до 20% по промокоду FITPORTAL</p>
+                            <a href="#" class="btn btn-warning btn-sm w-100 fw-bold">Перейти в магазин</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+
+    </div> -->
+
+    <!-- СКИПТ РАСЧЕТА КБЖУ -->
+    <script>
+        function calculateKBJU() {
+            const gender = document.getElementById('gender').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const activity = parseFloat(document.getElementById('activity').value);
+            const goal = document.getElementById('goal').value;
+
+            if (!age || !height || !weight) {
+                alert('Пожалуйста, заполните все поля (возраст, рост, вес)');
+                return;
+            }
+
+            // 1. Формула Миффлина-Сан Жеора для BMR
+            let bmr = (10 * weight) + (6.25 * height) - (5 * age);
+            if (gender === 'male') {
+                bmr += 5;
+            } else {
+                bmr -= 161;
+            }
+
+            // 2. Учет активности (TDEE)
+            let tdee = bmr * activity;
+
+            // 3. Учет цели
+            let targetCalories = tdee;
+            if (goal === 'lose') {
+                targetCalories = tdee * 0.85; // -15%
+            } else if (goal === 'gain') {
+                targetCalories = tdee * 1.15; // +15%
+            }
+
+            targetCalories = Math.round(targetCalories);
+
+            // 4. Расчет БЖУ
+            let proteinPct = 0.30, fatPct = 0.25, carbPct = 0.45;
+            if (goal === 'gain') {
+                proteinPct = 0.25; fatPct = 0.20; carbPct = 0.55;
+            }
+
+            const proteins = Math.round((targetCalories * proteinPct) / 4); // 1г белка = 4 ккал
+            const fats = Math.round((targetCalories * fatPct) / 9);         // 1г жира = 9 ккал
+            const carbs = Math.round((targetCalories * carbPct) / 4);        // 1г углевода = 4 ккал
+
+            // Вывод результатов
+            document.getElementById('resCalories').innerText = targetCalories;
+            document.getElementById('resProteins').innerText = proteins;
+            document.getElementById('resFats').innerText = fats;
+            document.getElementById('resCarbs').innerText = carbs;
+
+            // Показываем блок с результатами
+            document.getElementById('resultBlock').style.display = 'block';
+        }
+    </script>
 {% endblock %}

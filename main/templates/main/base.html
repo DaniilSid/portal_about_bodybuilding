@@ -126,6 +126,52 @@
             font-size: 1.05rem;
         }
 
+                /* ПОЛУПРОЗРАЧНАЯ КНОПКА «НАВЕРХ» */
+        .scroll-to-top-btn {
+            position: fixed;
+            bottom: 35px;
+            right: 35px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            /* Полупрозрачный темный фон с размытием (эффект матового стекла) */
+            background: rgba(15, 15, 15, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 2px solid rgba(255, 193, 7, 0.6); /* Желтая полупрозрачная рамка */
+            color: #ffc107;                            /* Желтая стрелка */
+            font-size: 1.6rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1090;
+            
+            /* Начальное состояние: скрыта */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Эффект при наведении мышкой */
+        .scroll-to-top-btn:hover {
+            background: #ffc107;
+            color: #000000;
+            border-color: #ffc107;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.5);
+        }
+
+        /* Класс, который делает кнопку видимой после скролла */
+        .scroll-to-top-btn.show-btn {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
     </style>
 </head>
 <body class="bg-light d-flex flex-column min-vh-100">
@@ -243,6 +289,35 @@
                 }
             });
         }
+        </script>
+            <!-- Кнопка "Наверх" -->
+        <button id="scrollToTopBtn" class="scroll-to-top-btn" title="Подняться наверх">
+            ↑
+        </button>
+        <script>
+        // Логика работы кнопки "Наверх"
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+        if (scrollToTopBtn) {
+            // Показываем кнопку, если проскроллили вниз больше 300px
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    scrollToTopBtn.classList.add('show-btn');
+                } else {
+                    scrollToTopBtn.classList.remove('show-btn');
+                }
+            });
+
+            // Плавный скролл наверх при клике
+            scrollToTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth' // Плавная прокрутка
+                });
+            });
+        }
     </script>
+
+
 </body>
 </html>
